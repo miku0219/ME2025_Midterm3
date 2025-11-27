@@ -69,8 +69,7 @@ def product():
             return jsonify({"error": "order_id required"}), 400
 
         db.delete_order(oid)
-        return jsonify({"message": "Order deleted successfully"})
-
+        return jsonify({"message": "Order deleted successfully"}), 200
 
 if __name__ == '__main__':
     app.run(host='127.0.0.1', port=5500, debug=True)
