@@ -1,5 +1,78 @@
 {% extends 'index.html' %}
 
 {% block form %}
+<table id="addTable" border="1" cellspacing="0" cellpadding="6" style="width:100%; text-align:center;">
+    <tr>
+        <th>日期</th>
+        <th>客戶名稱</th>
+        <th>商品種類</th>
+        <th>商品名稱</th>
+        <th>單價</th>
+        <th>數量</th>
+        <th>小計</th>
+        <th>狀態</th>
+        <th>備註</th>
+        <th>動作</th>
+    </tr>
 
+    <tr>
+        <!-- 日期 -->
+        <td>
+            <input type="date" id="dateInput" style="width:90%;">
+        </td>
+
+        <!-- 客戶名稱 -->
+        <td>
+            <input type="text" id="customerInput" style="width:90%;" required>
+        </td>
+
+        <!-- 商品種類 -->
+        <td>
+            <select id="categorySelect" onchange="selectCategory()" style="width:90%;">
+                <option disabled selected>請選擇</option>
+            </select>
+        </td>
+
+        <!-- 商品名稱 -->
+        <td>
+            <select id="productSelect" onchange="selectProduct()" style="width:90%;">
+                <option disabled selected>請選擇</option>
+            </select>
+        </td>
+
+        <!-- 單價 -->
+        <td>
+            <input type="number" id="priceInput" value="0" readonly style="width:70px;">
+        </td>
+
+        <!-- 數量 -->
+        <td>
+            <input type="number" id="qtyInput" value="1" min="1" oninput="countTotal()" style="width:60px;">
+        </td>
+
+        <!-- 小計 -->
+        <td>
+            <input type="number" id="subtotalDisplay" value="0" readonly style="width:70px;">
+        </td>
+
+        <!-- 狀態 -->
+        <td>
+            <select id="statusSelect" style="width:90%;">
+                <option>未付款</option>
+                <option>已付款</option>
+                <option>已完成</option>
+            </select>
+        </td>
+
+        <!-- 備註 -->
+        <td>
+            <input type="text" id="remarkInput" style="width:90%;">
+        </td>
+
+        <!-- 送出 -->
+        <td>
+            <button onclick="submitOrder()">送出</button>
+        </td>
+    </tr>
+</table>
 {% endblock%}
