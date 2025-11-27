@@ -43,6 +43,6 @@ fi
 
 # === 啟動應用程式 (背景執行) ===
 echo "啟動 app.py..."
-nohup python "$APP_FILE" > app.log 2>&1 &
+nohup python3 "$APP_FILE" > app.log 2>&1 &
 
 echo "部署完成！"
