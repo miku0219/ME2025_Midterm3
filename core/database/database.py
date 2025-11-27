@@ -41,11 +41,7 @@ class Database:
     def get_product_price(self, product):
         with self._connect() as conn:
             cur = conn.cursor()
-            cur.execute("""
-                SELECT price 
-                FROM commodity 
-                WHERE product=?
-            """, (product,))
+            cur.execute("SELECT price FROM commodity WHERE product = ?", (product,))
             row = cur.fetchone()
             return row[0] if row else None
 
@@ -56,22 +52,21 @@ class Database:
         with self._connect() as conn:
             cur = conn.cursor()
             order_id = self.generate_order_id()
-
             cur.execute("""
                 INSERT INTO order_list
                 (order_id, date, customer_name, product, amount, total, status, note)
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?)
             """, (
                 order_id,
-                order_data["date"],           # 對應 date
-                order_data["customer_name"],
-                order_data["product"],        # 對應 product
-                order_data["amount"],         # 對應 amount
-                order_data["total"],          # 對應 total
-                order_data["status"],
-                order_data["note"]
+                order_data.get("date"),
+                order_data.get("customer_name"),
+                order_data.get("product_name"),
+                order_data.get("qty"),
+                order_data.get("subtotal"),
+                order_data.get("status"),
+                order_data.get("remark")
             ))
-
+            
             conn.commit()
             return order_id
 
@@ -82,23 +77,13 @@ class Database:
         with self._connect() as conn:
             cur = conn.cursor()
             cur.execute("""
-                SELECT 
-                    o.order_id,
-                    o.date,
-                    o.customer_name,
-                    o.product,
-                    c.price,
-                    o.amount,
-                    o.total,
-                    o.status,
-                    o.note
+                SELECT o.order_id, o.date, o.customer_name, o.product, c.price, o.amount,
+                    (c.price * o.amount) AS subtotal, o.status, o.note
                 FROM order_list o
-                LEFT JOIN commodity c
-                ON o.product = c.product
+                LEFT JOIN commodity c ON o.product = c.product
                 ORDER BY o.date DESC
             """)
-            rows = cur.fetchall()
-            return [list(r) for r in rows]
+            return [list(row) for row in cur.fetchall()]
 
     # =====================
     # DELETE：刪除訂單
@@ -106,8 +91,6 @@ class Database:
     def delete_order(self, order_id):
         with self._connect() as conn:
             cur = conn.cursor()
-            cur.execute("""
-                DELETE FROM order_list 
-                WHERE order_id=?
-            """, (order_id,))
+            cur.execute("DELETE FROM order_list WHERE order_id = ?", (order_id,))
             conn.commit()
+            return cur.rowcount > 0
